@@ -1,0 +1,24 @@
+{
+  "name": "skill-eval-optimizer",
+  "version": "1.0.0",
+  "description": "Agent skill: evaluate and auto-optimize agent skills — inventory scan, verdict triage, 8-dimension scoring, hill-climbing with git ratchet, real test-prompt verification, visual result cards.",
+  "license": "MIT",
+  "author": "anthonyhann",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anthonyhann/skill-eval-optimizer.git"
+  },
+  "keywords": [
+    "agent-skill",
+    "claude-code",
+    "skill",
+    "evaluation",
+    "hill-climbing",
+    "llm",
+    "prompt-engineering"
+  ],
+  "dependencies": {
+    "@playwright/test": "^1.59.1",
+    "playwright-core": "^1.59.1"
+  }
+}

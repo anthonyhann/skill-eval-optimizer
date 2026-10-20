@@ -1,0 +1,15 @@
+# Runtime artifacts (local snapshots, never committed)
+results.json
+results.tsv
+
+# Dependencies (only needed for card screenshots)
+node_modules/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# Generated card PNGs (regenerable via scripts/screenshot.mjs)
+templates/card-overview.png

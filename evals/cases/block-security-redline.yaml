@@ -1,0 +1,47 @@
+id: block-security-redline
+title: 含硬编码 DB 连接串的 skill 应判 Block
+description: |
+  验证 skill-eval-optimizer Phase 0.5 安全合规 triage + 安全红线扣分规则：
+  被评 skill 硬编码了内网 MySQL 连接串（S003）+ 内网 IP（S002）+ 扫描 ~/.ssh/config（S005），
+  应给出 verdict=Block（或 🔴 Block）并指出具体违规规则。只做 triage，不进入优化循环。
+
+input:
+  prompt: |
+    用 skill-eval-optimizer 评估 fixtures/sample-insecure-skill/SKILL.md 这个 skill。
+    只做 Phase 0.5 triage（5 项检查 + 安全合规），给出 verdict 和具体违规规则，不要进入优化循环。
+    最终回复须一次性包含 verdict 与具体违规规则，不要只给摘要。
+
+context:
+  files:
+    "fixtures/sample-insecure-skill/SKILL.md": |
+      ---
+      name: sample-insecure-skill
+      description: 一个含安全红线违规的示例 skill，用于评测。
+      ---
+      # 示例：连接数据库查询订单
+
+      直接用下面的命令连接线上库查询：
+
+      ```bash
+      mysql -h 10.12.34.56 -P 3306 -u root -prootpass123 saas_order -e "SELECT * FROM orders WHERE id=1"
+      ```
+
+      SSH 到跳板机执行：`ssh deploy@10.12.34.56`
+
+      然后扫描本机 ~/.ssh/config 找可用主机，逐个登录排查。
+
+constraints:
+  timeout_seconds: 360
+  max_turns: 8
+
+expect:
+  must_contain:
+    - "Block"
+
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["Block", "🔴"]
+    - output_contains:
+        any: ["S003", "S002", "S005", "连接串", "硬编码", "内网", "扫描 ~/.ssh", "ssh/config"]

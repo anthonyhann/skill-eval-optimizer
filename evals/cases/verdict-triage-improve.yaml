@@ -1,0 +1,50 @@
+id: verdict-triage-improve
+title: 结构合格但指令偏泛的 skill 应判 Improve
+description: |
+  验证 verdict 分流：被评 skill 安全合规、用途清晰、有 frontmatter + 触发词 + 可用 workflow
+  与非反模式异常处理（不构成 Retire 级低质），但指令具体性不足（动词模糊、缺参数/示例、缺检查点）。
+  应判 verdict=Improve，并指出具体短板维度（指令具体性/边界/检查点等）。只做 triage，不进入优化循环。
+
+input:
+  prompt: |
+    用 skill-eval-optimizer 评估 fixtures/sample-vague-skill/SKILL.md 这个 skill。
+    只做 Phase 0.5 triage，给出 verdict 和理由，不要进入优化循环。
+    最终回复须一次性包含 verdict 与理由，不要只给摘要。
+
+context:
+  files:
+    "fixtures/sample-vague-skill/SKILL.md": |
+      ---
+      name: sample-vague-skill
+      description: 将 CSV 文件转换为 JSON 格式的小工具。触发词：csv转json、csv to json、转换数据格式。
+      triggers: csv转json、csv to json
+      allowed-tools: [Read, Write, Bash]
+      ---
+      # CSV 转 JSON 工具
+
+      ## 用途
+      把用户指定的 CSV 文件（首行为表头）转成 JSON 数组：每行一个对象，键取表头，
+      写到同目录同名 .json 文件。
+
+      ## 工作流
+      1. 读取用户指定的 CSV 文件
+      2. 解析每行，按表头生成键值对
+      3. 输出 JSON 到同目录
+
+      ## 步骤
+      先读文件，然后转，最后写。注意编码问题。
+
+      ## 异常
+      文件不存在则提示用户检查路径；编码读取失败时换 utf-8-sig 重试一次。
+
+constraints:
+  timeout_seconds: 360
+  max_turns: 8
+
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["Improve"]
+    - output_contains:
+        any: ["指令", "具体", "模糊", "D5", "检查点", "边界", "触发", "工作流"]

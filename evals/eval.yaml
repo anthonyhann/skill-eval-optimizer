@@ -1,0 +1,53 @@
+# skill-up 评测配置 schema 版本，勿改
+schema_version: v1alpha1
+
+environment:
+  # 元评测 skill，纯文本分析，无需沙箱
+  type: none
+
+skills:
+  # 被测 skill 本身
+  - source: local_path
+    path: .
+
+engine:
+  # 用 claude 兼容 CLI 执行（默认 claude，需 OAuth 登录 claude /login；
+  # 可用 SKILLUP_CLAUDE_CMD 切换到其他兼容 CLI）。
+  # 注：不用内置 claude_code 引擎，已知问题：
+  #   1) 固定传 --session-id，某些 API 网关对该参数间歇性返回 400
+  #   2) 通道失效时 CLI 以 exit 0 返回
+  #      "Not logged in" 合成消息，不区分 FAIL/ERROR，污染 pass_rate
+  # wrapper（evals/scripts/run-claude.sh，权威副本）已内置防护：
+  #   - 通道可切换：默认 claude；SKILLUP_CLAUDE_CMD 覆盖
+  #   - 启动预检（CLI 存在 + 轻量探测，缓存 5 分钟）fail-fast
+  #   - 中途认证失败签名拦截 → 非零退出 → skill-up 记 ERROR 而非 FAIL
+  #   - 网关 400 / 模型侧 api_error 重试 8 次（退避封顶 12s）
+  #   - 评测纯净模式：默认不加载用户全局 MCP/插件（单次调用 20-30s+ 降至 ~7s，
+  #     避免拖爆 case 超时与无关变量；SKILLUP_KEEP_MCP=1 保留）
+  # 其他 skill 的 evals 引用本 wrapper 时请复制到各自 evals/scripts/ 下（各 skill
+  # 自包含，勿跨 skill 引用绝对路径之外的实现）。
+  # 限制：仅支持单轮用例（当前加载 case 均为单轮）。
+  name: claude-code-nosid
+  custom:
+    transport: local
+    response_format: text
+    timeout_seconds: 600
+    local:
+      command: bash
+      args:
+        # 相对路径（基准 = 运行时 workspace，custom.local.cwd 默认 ${workspace}），
+        # 不再写死某台机器的绝对路径
+        - evals/scripts/run-claude.sh
+        - ${input_file}
+
+cases:
+  files:
+    - evals/cases/block-security-redline.yaml
+    - evals/cases/verdict-triage-improve.yaml
+    - evals/cases/rubric-dimensions.yaml
+  defaults:
+    timeout_seconds: 360
+    max_turns: 8
+
+report:
+  formats: [json, html]

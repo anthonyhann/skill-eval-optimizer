@@ -1,0 +1,55 @@
+id: rubric-dimensions
+title: 应按 8 维度 rubric 输出结构化评分
+description: |
+  验证 Phase 1 基线评估：对被评 skill 按 8 维度 rubric 逐项打分，
+  输出应含维度标记（D1/D5/D8 三锚点，覆盖结构+效果）+ 总分（/100 或 Score）。
+  只做基线评估，不进入优化循环。
+
+input:
+  prompt: |
+    用 skill-eval-optimizer 对 fixtures/sample-decent-skill/SKILL.md 做基线评估（Phase 1），
+    按 8 维度 rubric 逐维打分并给出总分，不要进入优化循环。
+    最终回复须一次性包含完整评分卡（8 维逐维明细 + 总分/100），不要只给摘要。
+
+context:
+  files:
+    "fixtures/sample-decent-skill/SKILL.md": |
+      ---
+      name: sample-decent-skill
+      description: 把 Markdown 文档里的链接抽取出来校验是否可访问，输出失效链接报告。触发词：检查死链、dead link check、链接校验。
+      triggers: 检查死链、dead link、链接校验
+      allowed-tools: [Read, Write, Bash]
+      ---
+      # 死链检查工具
+
+      ## 用途
+      扫描 Markdown，提取所有链接，HTTP HEAD 校验，输出失效链接报告。
+
+      ## 工作流
+      1. Read 目标 .md 文件
+      2. 正则提取 `[text](url)` 中的 url
+      3. 对每个 url 执行 `curl -sI -m 5`，记录状态码
+      4. Write 报告到 dead-links.txt，格式：`url | status`
+
+      ## 检查点
+      扫描完成后、写报告前等用户确认。
+
+      ## 异常
+      curl 超时记为 unknown，不中断；文件不存在则提示路径。
+
+constraints:
+  timeout_seconds: 360
+  max_turns: 8
+
+judge:
+  type: rule_based
+  success:
+    # 维度行兼容三种呈现：D1 标记 / 维度 1 / 表格列 | 1 |
+    - output_matches:
+        all: ['D1|维度\s*1|\|\s*1\s*\|']
+    - output_matches:
+        all: ['D5|维度\s*5|\|\s*5\s*\|']
+    - output_matches:
+        all: ['D8|维度\s*8|\|\s*8\s*\|']
+    - output_matches:
+        any: ["总分", "/100", "Score"]
