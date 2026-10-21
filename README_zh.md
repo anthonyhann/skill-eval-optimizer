@@ -20,6 +20,15 @@
 ![真实成果卡片：knowledge-wiki 从 80.8 分进化到 90.3 分（+9.5），404→216 行，token 占用 -39%](templates/card-knowledge-wiki.png)
 > 本 skill 生成的真实成果卡片：**knowledge-wiki 80.8 → 90.3（+9.5 分）**，同时从 404 行精简到 216 行，token 占用下降 39%。
 
+## 📈 实战成绩单
+
+六个月的生产实证（**2026-04 至 2026-10**），每一条记录都由本 skill 自己打分：
+
+- 管理 **49 个 agent skills**，累计 **342 条评分优化记录**
+- **44 个**有完整基线的 skill 中 **40 个提升，平均 +9.9 分（/100）**——分数真涨才保留改动，否则回滚
+- 最大逆袭：一个代码审查 skill **19 轮从 61.2 → 93.1** → [agentic-code-review](https://github.com/anthonyhann/agentic-code-review)；一个知识库 skill **67.8 → 90.3**，同时 token 占用 **−39%** → [knowledge-wiki](https://github.com/anthonyhann/knowledge-wiki)
+- 它自己的基线分：**90.7 / 100**——优化器也优化它自己
+
 ## 😅 你的 skill 是不是也这样？
 
 - 上周把某个 skill 的提示词改了三版。**到底有没有变好？没人知道——因为没有分。**

@@ -20,6 +20,15 @@ An agent skill that scores your other skills on **8 dimensions (/100)**, rewrite
 ![A real result card: knowledge-wiki went from 80.8 to 90.3 (+9.5), 404→216 lines, token footprint -39%](templates/card-knowledge-wiki.png)
 > A real card this skill generated: **knowledge-wiki 80.8 → 90.3 (+9.5)**, while shrinking 404 → 216 lines and cutting token footprint by 39%.
 
+## 📈 Track record
+
+Six months of production receipts (**2026-04 → 2026-10**), every record scored by this skill itself:
+
+- **49 agent skills** under management, **342 scored optimization records**
+- Of **44 skills** with full baselines: **40 improved, average +9.9 / 100** — the loop keeps a change only when the score actually goes up
+- Biggest comeback: a code-review skill **61.2 → 93.1** over 19 rounds → [agentic-code-review](https://github.com/anthonyhann/agentic-code-review); a knowledge skill **67.8 → 90.3** while *shrinking 39% of its tokens* → [knowledge-wiki](https://github.com/anthonyhann/knowledge-wiki)
+- Its own baseline: **90.7 / 100** — yes, the optimizer optimizes itself
+
 ## 😅 Sound familiar?
 
 - You tweaked a skill prompt three times last week. Did it actually get better? **Nobody knows — there's no score.**
